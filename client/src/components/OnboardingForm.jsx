@@ -17,7 +17,7 @@ const SubInput = styled.div`
 
 const OnboardingForm = () => {
   const [form] = Form.useForm();
-  const [isCitizen, setIsCitizen] = useState(false);
+  const [isCitizen, setIsCitizen] = useState("unknown");
   const [visaType, setVisaType] = useState('');
   const [optReceipt, setOptReceipt] = useState(null);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
@@ -30,22 +30,6 @@ const OnboardingForm = () => {
   const feedback = currentUser?.feedback
   const isPending = onboardingStatus === 'Pending'
 
-//   const getallDocuments = async () => {
-//     console.log("documents runs")
-//     try {
-// await fetch(`http://localhost:5000/api/documents/list/${currentUser.id}`, {
-//        headers: { Authorization: `Bearer ${token}` },
-//       });
-//     } catch(err) {
-//    setErr(err.message)
-//     }
-//   }
-
-
-
-  // useEffect(() => {
-  //   getallDocuments();
-  // }, []);
 
 const dispatch = useDispatch();
 
@@ -68,12 +52,17 @@ const dispatch = useDispatch();
 
       const uploaded = res.data.document;
     setUploadedDocuments((prev) => [...prev, uploaded._id]);
-    setOptReceipt(uploaded.fileUrl);
+    setOptReceipt({"url" :uploaded.fileUrl, "docId" : uploaded._id});
     message.success('OPT Receipt uploaded successfully');
     } catch (err) {
       console.error('OPT Upload failed', err);
     }
   };
+
+  const handlePreview = (docId) => {
+        const url = `http://localhost:5000/api/documents/preview/${docId}`;
+        window.open(url, '_blank');
+};
 
   const onFinish = async (values) => {
   if (visaType === 'F1(CPT/OPT)' && !optReceipt) {
@@ -130,7 +119,13 @@ localStorage.setItem('user', JSON.stringify(updatedUser));
   showIcon
 />)}
       <Title level={4}>Basic Info</Title>
-      <Form.Item label="Upload Profile Picture (URL)" required>
+      <Form.Item label="Upload Profile Picture (URL)"
+       name="profilePicture"
+      required
+      rules={[
+    { required: true, message: 'Please provide a profile picture URL' },
+    { type: 'url', message: 'Please enter a valid URL' },
+  ]}>
     <Input
         value={profilePicture}
         onChange={(e) => setProfilePicture(e.target.value)}
@@ -150,12 +145,36 @@ localStorage.setItem('user', JSON.stringify(updatedUser));
       <Form.Item name={["address", "zip"]} label="ZIP" rules={[{ required: true }]}><Input /></Form.Item>
 
       <Title level={4}>Contact</Title>
-      <Form.Item name={["contact", "cellPhone"]} label="Cell Phone" rules={[{ required: true }]}><Input /></Form.Item>
+      <Form.Item
+  name={["contact", "cellPhone"]}
+  label="Cell Phone"
+  rules={[
+    { required: true, message: 'Cell phone is required' },
+    { pattern: /^\d{10}$/, message: 'Must be 10 digits' }
+  ]}
+>
+  <Input />
+</Form.Item>
       <Form.Item name={["contact", "workPhone"]} label="Work Phone"><Input /></Form.Item>
       <Form.Item label="Email"><Input value={email} disabled /></Form.Item>
 
       <Title level={4}>Personal</Title>
-      <Form.Item name="dob" label="Date of Birth" rules={[{ required: true }]}><DatePicker style={{ width: '100%' }} /></Form.Item>
+      <Form.Item
+  name="dob"
+  label="Date of Birth"
+  rules={[
+    { required: true },
+    () => ({
+      validator(_, value) {
+        return value && value.isBefore()
+          ? Promise.resolve()
+          : Promise.reject(new Error('Date of Birth must be in the past'));
+      },
+    }),
+  ]}
+>
+  <DatePicker style={{ width: '100%' }} />
+</Form.Item>
       <Form.Item
   name="gender"
   label="Gender"
@@ -167,7 +186,19 @@ localStorage.setItem('user', JSON.stringify(updatedUser));
     <Option value="prefer not to say">Prefer not to say</Option>
   </Select>
 </Form.Item>
-      <Form.Item name="ssn" label="SSN" rules={[{ required: true }]}><Input /></Form.Item>
+      <Form.Item
+  name="ssn"
+  label="SSN"
+  rules={[
+    { required: true, message: 'SSN is required' },
+    {
+      pattern: /^\d{3}-\d{2}-\d{4}$/,
+      message: 'SSN must be in the format XXX-XX-XXXX',
+    },
+  ]}
+>
+  <Input placeholder="123-45-6789" />
+</Form.Item>
 
       <Title level={4}>Visa</Title>
       <Form.Item
@@ -182,7 +213,7 @@ localStorage.setItem('user', JSON.stringify(updatedUser));
         </Select>
       </Form.Item>
 
-      {isCitizen ? (
+      {isCitizen === true ? (
         <SubInput>
           <Form.Item name={["visa", "citizenType"]} label="Citizen Type">
             <Select>
@@ -255,7 +286,6 @@ localStorage.setItem('user', JSON.stringify(updatedUser));
           <span><strong>Profile Picture</strong></span>
           <Space>
             <a href={profilePicture} target="_blank" rel="noopener noreferrer">Preview</a>
-            <a onClick={() => setProfilePicture('')} style={{ color: 'red' }}>Delete</a>
           </Space>
         </Space>
       ) : (
@@ -266,8 +296,7 @@ localStorage.setItem('user', JSON.stringify(updatedUser));
           <Space style={{ justifyContent: 'space-between', width: '100%', marginTop: '0.5rem' }}>
             <span><strong>OPT Receipt</strong></span>
             <Space>
-              <a onClick={() => window.open(URL.createObjectURL(optReceipt))}>Preview</a>
-              <a onClick={() => setOptReceipt(null)} style={{ color: 'red' }}>Delete</a>
+               <Button onClick={() => handlePreview(optReceipt._id)}>Preview</Button>
             </Space>
           </Space>
         ) : (

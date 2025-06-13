@@ -12,35 +12,44 @@ const VisaStatusManagement = () => {
   const userId = currentUser?.id;
   const [visa, setVisa] = useState(null);
   const [form] = Form.useForm();
+  const [currentStatus, setCurrentStatus] = useState(null)
+  const fetchVisaStatus = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/employee/visa-status/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setVisa(res.data);
+      } catch (err) {
+        message.error('Failed to fetch visa status');
+      }
+    };
 
-  useEffect(() => {
-    axios
-      .get(`http://localhost:5000/api/employee/visa-status/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => setVisa(res.data))
-      .catch((err) => message.error('Failed to fetch visa status'));
-  }, [userId, token]);
-      const handlePreview = (docId) => {
+    useEffect(() => {
+      if (userId && token) fetchVisaStatus();
+    }, [userId, token]);
+
+const handleUpload = (type) => async ({ file }) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('type', type);
+  formData.append('userId', userId);
+
+  try {
+    await axios.post('http://localhost:5000/api/documents/upload', formData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    message.success(`${type} uploaded successfully`);
+    fetchVisaStatus();
+  } catch (err) {
+    message.error('Upload failed');
+  }
+};
+
+  const handlePreview = (docId) => {
         const url = `http://localhost:5000/api/documents/preview/${docId}`;
         window.open(url, '_blank');
 };
 
-  const handleUpload = (type) => async ({ file }) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('type', type);
-    formData.append('userId', userId);
-
-    try {
-      await axios.post('http://localhost:5000/api/documents/upload', formData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      message.success(`${type} uploaded successfully`);
-    } catch (err) {
-      message.error('Upload failed');
-    }
-  };
 
   if (!visa) return <p>Loading...</p>;
 

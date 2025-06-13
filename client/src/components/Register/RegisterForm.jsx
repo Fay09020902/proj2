@@ -4,10 +4,6 @@ import { Form, Input, Button, Typography, message, Card } from 'antd';
 import styled from '@emotion/styled';
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentUser } from '../../features/user'
-// import { CardContainer } from '../../common/QuantityControl'
-// import { makeHTTPPOSTRequest } from '../../services/api';
-// import {createUserAsync, clearError} from '../../features/user'
-
 const { Title } = Typography;
 
 const RegisterContainer = styled.div`
@@ -33,6 +29,7 @@ const RegisterWithToken = () => {
   const { token } = useParams();
   const [err, setErr] = useState(null)
   const [email, setEmail] = useState('');
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
 
   useEffect(() => {
     fetch('http://localhost:5000/api/validate-token', {
@@ -42,12 +39,16 @@ const RegisterWithToken = () => {
               },
       body: JSON.stringify({ token }),
     })
-      .then(res => res.json())
-      .then(data => {
-        if (data.email) {
-          setEmail(data.email);
-        } else {
-          message.error(data.message || 'Invalid or expired token');
+      .then(async (res) => {
+        const data = await res.json();
+        if (data.message === 'User already registered with this email. Please Signin') {
+        setAlreadyRegistered(true);
+      }
+        if (!res.ok) {
+          throw new Error(data.message);
+        }
+        if(data.email) {
+          setEmail(data.email)
         }
       })
       .catch((err) => setErr(err));
@@ -62,11 +63,6 @@ const RegisterWithToken = () => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
-      // const storedUser = localStorage.getItem('user');
-      //     if (storedUser) {
-      //       // const parsedUser = JSON.parse(storedUser);
-      //       dispatch(setCurrentUser(JSON.parse(storedUser) ));
-      //     }
       message.success('Registration successful!');
       navigate('/signin');
     } catch (err) {
@@ -78,7 +74,7 @@ const RegisterWithToken = () => {
     <RegisterContainer>
       {err && <div style={{ color: "red", marginBottom: "1rem" }}>{err.message}</div>}
       <Title level={3}>Register Your Account</Title>
-      <StyledForm layout="vertical" onFinish={onFinish}>
+      <StyledForm layout="vertical" onFinish={onFinish} disabled={alreadyRegistered}>
         <Form.Item label="Email">
           <Input value={email} disabled />
         </Form.Item>

@@ -6,7 +6,7 @@ const RegistrationInvite = require('../models/RegistrationInvite')
 
 
 // ✅ GET /api/users (HR only)
-exports.getAllEmployees = async (req, res) => {
+exports.getAllUsers = async (req, res) => {
   try {
     const employees = await User.find({ isAdmin: false }).select('-password');
     res.status(200).json(employees);

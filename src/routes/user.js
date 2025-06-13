@@ -6,7 +6,7 @@ const isHR = require('../middleware/isHR')
 
 const {
 registerUser,
-  getAllEmployees,
+  getAllUsers,
   getCurrentUser,
   getUserById,
   updateUserInfo,
@@ -30,7 +30,7 @@ router.get('/', async (req, res) => {
 router.post('/register', registerUser);
 
 // ✅ Get all employees (HR only)
-router.get('/', auth, isHR, getAllEmployees);
+router.get('/', auth, isHR, getAllUsers);
 
 // ✅ Get current logged-in user's info
 router.get('/me', auth, getCurrentUser);

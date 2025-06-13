@@ -96,8 +96,13 @@ exports.hrVisaStatusAll = async (req, res) => {
 exports.hrVisaStatusReview = async (req, res) => {
   try {
     const { userId, docType, action, feedback } = req.body;
-    console.log(userId, docType)
-    const doc = await Document.findOne({ userId, type: docType }).sort({ createdAt: -1 });
+    function toSnakeCasePreserveAcronym(camel) {
+    return camel.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
+    }
+   const type =toSnakeCasePreserveAcronym(docType)
+
+    console.log(userId, type)
+    const doc = await Document.findOne({ userId, type }).sort({ createdAt: -1 });
     if (!doc) return res.status(404).json({ message: 'Document not found' });
 
     doc.status = action === 'approve' ? 'Approved' : 'Rejected';

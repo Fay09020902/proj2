@@ -18,18 +18,6 @@ const ViewApplicationPage = () => {
   const [feedback, setFeedback] = useState('');
   const navigate = useNavigate();
 
-//   const getallDocuments = async () => {
-//     try {
-// await fetch(`http://localhost:5000/api/hr/documents/list/${userId}`, {
-//        headers: { Authorization: `Bearer ${token}` },
-//       });
-//     } catch(err) {
-//    setErr(err.message)
-//     }
-//   }
-// useEffect(() => {
-//   getallDocuments();
-// }, [userId]);
    const handleApprove = async () => {
     setSubmitting(true);
     try {

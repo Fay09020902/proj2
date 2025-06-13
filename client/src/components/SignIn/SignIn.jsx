@@ -48,7 +48,7 @@ const SignIn = () => {
         if (onboardingStatus === 'Unsubmitted' || onboardingStatus === 'Rejected' ) {
          navigate('/onboarding');
         } else {
-        navigate("/");
+        navigate("/employee/dashboard");
         }
       }
     }

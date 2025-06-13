@@ -15,11 +15,11 @@ const VisaStatusManagementInProgress = () => {
   }).join('');
 }
 
-      const handlePreview = (docId) => {
-        console.log("docif", docId)
+  const handlePreview = (docId) => {
         const url = `http://localhost:5000/api/documents/preview/${docId}`;
         window.open(url, '_blank');
 };
+
   const fetchEmployees = async () =>{
       axios
             .get('http://localhost:5000/api/hr/visa-status/all', {
@@ -31,26 +31,25 @@ const VisaStatusManagementInProgress = () => {
   useEffect(() => {
     fetchEmployees()
   }, []);
-  console.log("employees ", employees)
 
   const getNextStep = (emp) => {
     const { optReceipt, optEAD, i983, i20 } = emp;
 
-    if (optReceipt.status === 'Not Submitted') return ['Submit OPT Receipt', 'notify', 'opt_receipt'];
-    if (optReceipt.status === 'Pending') return ['Waiting for HR to approve OPT Receipt', 'approve', 'opt_receipt'];
-    if (optReceipt.status === 'Rejected') return ['Resubmit OPT Receipt', 'notify', 'opt_receipt'];
+    if (optReceipt.status === 'Not Submitted') return ['Submit OPT Receipt', 'notify', 'optReceipt'];
+    if (optReceipt.status === 'Pending') return ['Waiting for HR to approve OPT Receipt', 'approve', 'optReceipt'];
+    if (optReceipt.status === 'Rejected') return ['Resubmit OPT Receipt', 'notify', 'optReceipt'];
 
-    if (optEAD.status === 'Not Submitted') return ['Submit OPT EAD', 'notify', 'opt_ead'];
-    if (optEAD.status === 'Pending') return ['Waiting for HR to approve OPT EAD', 'approve', 'opt_ead'];
-    if (optEAD.status === 'Rejected') return ['Resubmit OPT EAD', 'notify', 'opt_ead'];
+    if (optEAD.status === 'Not Submitted') return ['Submit OPT EAD', 'notify', 'optEAD'];
+    if (optEAD.status === 'Pending') return ['Waiting for HR to approve OPT EAD', 'approve', 'optEAD'];
+    if (optEAD.status === 'Rejected') return ['Resubmit OPT EAD', 'notify', 'optEAD'];
 
-    if (i983.status === 'Not Submitted') return ['Submit I-983', 'notify', 'i_983'];
-    if (i983.status === 'Pending') return ['Waiting for HR to approve I-983', 'approve', 'i_983'];
-    if (i983.status === 'Rejected') return ['Resubmit I-983', 'notify', 'i_983'];
+    if (i983.status === 'Not Submitted') return ['Submit I-983', 'notify', 'i983'];
+    if (i983.status === 'Pending') return ['Waiting for HR to approve I-983', 'approve', 'i983'];
+    if (i983.status === 'Rejected') return ['Resubmit I-983', 'notify', 'i983'];
 
-    if (i20.status === 'Not Submitted') return ['Submit I-20', 'notify', 'i_20'];
-    if (i20.status === 'Pending') return ['Waiting for HR to approve I-20', 'approve', 'i_20'];
-    if (i20.status === 'Rejected') return ['Resubmit I-20', 'notify', 'i_20'];
+    if (i20.status === 'Not Submitted') return ['Submit I-20', 'notify', 'i20'];
+    if (i20.status === 'Pending') return ['Waiting for HR to approve I-20', 'approve', 'i20'];
+    if (i20.status === 'Rejected') return ['Resubmit I-20', 'notify', 'i20'];
 
     return ['All documents approved', 'none', null];
   };

@@ -40,21 +40,19 @@ const OnboardingReviewPage = () => {
   const [activeTab, setActiveTab] = useState('Pending');
   const { applications, fetched, loading, error } = useSelector((state) => state.onboarding);
   const token = localStorage.getItem('token')
+  const [initialFetched, setInitialFetched] = useState(false);
   const [feedback, setFeedback] = useState('');
   const dispatch = useDispatch();
-
-  //console.log("reredender happens")
-//   console.log(applications)
-
-
-
-    useEffect(() => {
-        //console.log("useefect happens")
-      if(token && !fetched[activeTab]) {
-        //console.log("useefect fetch happens")
+  
+  //避免重复fetch
+  useEffect(() => {
+      if (token && !initialFetched) {
+        dispatch(fetchApplicationsByStatus({ status: activeTab, token }));
+        setInitialFetched(true);
+      } else if (token && !fetched[activeTab]) {
         dispatch(fetchApplicationsByStatus({ status: activeTab, token }));
       }
-  }, [activeTab, fetched, token]);
+}, [activeTab, fetched, token, initialFetched]);
 
   const tabData = useMemo(() => applications[activeTab] || [], [applications, activeTab])
 
@@ -80,8 +78,6 @@ const OnboardingReviewPage = () => {
                 )}
               </TabPane>
             ))}
-
-
            </Tabs>
       </div>
     )

@@ -57,7 +57,7 @@ exports.requestAccess = async (req, res) => {
 // 🟢 Frontend: Validate token before showing form
 exports.validateRegistrationToken = async (req, res) => {
   const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(' ')[1]; // Get token after "Bearer "
+  const token = authHeader && authHeader.split(' ')[1];
 
   console.log('📨 Received token:', token);
 
@@ -66,9 +66,13 @@ exports.validateRegistrationToken = async (req, res) => {
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already registered with this email. Please Signin' });
+    }
     res.status(200).json({ email: decoded.email });
   } catch (err) {
-    console.error('❌ Token verification error:', err);
     const msg = err.name === 'TokenExpiredError' ? 'Link expired' : 'Invalid token';
     res.status(400).json({ message: msg });
   }
