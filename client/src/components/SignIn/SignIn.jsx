@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Form, Input, Button, Typography } from 'antd';
+import { Form, Input, Button, Typography, Alert } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { loginUser, clearError } from '../../features/user';
 import { CardContainer, AuthContainer } from '../../common/QuantityControl'
@@ -32,7 +32,6 @@ const ResponsiveFooter = styled.div`
 
 const SignIn = () => {
   const { error, isAuthenticated, isAdmin, onboardingStatus } = useSelector((state) => state.user);
-  console.log("current user: ", useSelector((state) => state.user))
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -68,7 +67,18 @@ const SignIn = () => {
     <CardContainer>
       <AuthContainer>
         <Title level={3}>Sign In to Your Account</Title>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && (
+  <Form.Item>
+    <Alert
+      message="Login Failed"
+      description={error}
+      type="error"
+      showIcon
+      closable
+      onClose={() => dispatch(clearError())}
+    />
+  </Form.Item>
+)}
         <StyledForm name="signin" layout="vertical" onFinish={onFinish}>
           <Form.Item
             label="Email"

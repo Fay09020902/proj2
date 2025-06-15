@@ -36,14 +36,13 @@ const statusList = ['Pending', 'Approved', 'Rejected'];
   ];
 
 const OnboardingReviewPage = () => {
-//   const [applications, setApplications] = useState([]);
   const [activeTab, setActiveTab] = useState('Pending');
   const { applications, fetched, loading, error } = useSelector((state) => state.onboarding);
   const token = localStorage.getItem('token')
   const [initialFetched, setInitialFetched] = useState(false);
   const [feedback, setFeedback] = useState('');
   const dispatch = useDispatch();
-  
+
   //避免重复fetch
   useEffect(() => {
       if (token && !initialFetched) {

@@ -18,6 +18,7 @@ const userSlice = createSlice({
     reducers: {
         setCurrentUser: (state, action) => {
             state.currentUser = action.payload;
+            state.isAdmin = action.payload.isAdmin;
             state.isAuthenticated = !!action.payload;
             state.onboardingStatus = action.payload.onboardingStatus
         },

@@ -3,41 +3,6 @@ const Document = require('../models/Document');
 const EmployeeProfile = require('../models/EmployeeProfile')
 const path = require('path');
 const fs = require('fs');
-// exports.uploadDocument = async (req, res) => {
-//   try {
-//     const file = req.file;
-//     const { type, userId } = req.body;
-
-//     if (!file) {
-//       return res.status(400).json({ success: false, message: 'No file uploaded.' });
-//     }
-
-//     if (!type) {
-//       return res.status(400).json({ success: false, message: 'Document type is required.' });
-//     }
-
-//     await Document.deleteMany({ userId, type });
-//     const newDoc = new Document({
-//       userId,
-//       filename: file.filename,
-//       originalName: file.originalname,
-//       fileUrl: `/uploads/${file.filename}`,
-//       type,
-//       status: 'pending',
-//     });
-
-//     await newDoc.save();
-
-//     await EmployeeProfile.updateOne(
-//       { userId },
-//       { $addToSet: { documents: newDoc._id } }
-//     );
-
-//     res.status(201).json({ message: 'Document uploaded successfully', document: newDoc });
-//   } catch (err) {
-//      res.status(500).json({ message: err.errmsg });
-//   }
-// };
 
 exports.uploadDocument = async (req, res) => {
   try {
