@@ -18,7 +18,7 @@ const PersonalInfoForm = () => {
     const token = localStorage.getItem('token');
     const onboardingStatus = currentUser?.onboardingStatus;
     const email = currentUser?.email;
-    const userId = currentUser?.id;
+    const userId = currentUser?._id;
      const { error, loading} = useSelector((state) => state.employee);
 const [form] = Form.useForm();
 const [profile, setProfile] = useState(null);

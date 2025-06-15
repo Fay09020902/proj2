@@ -33,8 +33,11 @@ exports.getApplicationByUserId = async (req, res) => {
 
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
+    const documentsUser = await Document.find({userId})
 
     const profile = await EmployeeProfile.findOne({ userId }).populate('documents');
+    console.log("profile: ", profile)
+    console.log("document ", documentsUser)
 
     res.status(200).json({
       userId: user._id,
@@ -42,7 +45,8 @@ exports.getApplicationByUserId = async (req, res) => {
       email: user.email,
       status: user.onboardingStatus,
       feedback: user.feedback || '',
-      profile: profile || null
+      profile: profile || null,
+      documents: documentsUser
     });
   } catch (err) {
     console.error('Failed to fetch application:', err);

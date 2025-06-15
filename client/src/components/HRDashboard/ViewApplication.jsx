@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
+
 import { fetchApplicationByUserId} from '../../features/onboarding'
 import axios from 'axios';
 import { Typography, Button, Input, Form, Spin, Collapse, Alert } from 'antd';
+// import { setOnboardingStatus } from '../../features/user';
 const { Title, Paragraph } = Typography;
 const { Panel } = Collapse;
 const { TextArea } = Input;
@@ -42,6 +44,8 @@ const ViewApplicationPage = () => {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ userId, feedback }),
       });
+      //  const data = await res.json();
+      // dispatch(setOnboardingStatus(data.onboardingStatus));
       navigate('/hr/dashboard');
     } catch (err) {
       setErr(err.message)

@@ -46,6 +46,7 @@ exports.submitProfile = async (req, res) => {
 
     const docs = await Document.find({ userId });
     profile.documents = docs.map(doc => doc._id);
+    await profile.save();
 
     res.status(200).json({ message: 'Profile saved successfully', profile });
   } catch (err) {

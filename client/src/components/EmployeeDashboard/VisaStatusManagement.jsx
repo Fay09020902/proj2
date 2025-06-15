@@ -9,7 +9,7 @@ const { Panel } = Collapse;
 const VisaStatusManagement = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
   const token = localStorage.getItem('token');
-  const userId = currentUser?.id;
+  const userId = currentUser?._id;
   const [visa, setVisa] = useState(null);
   const [form] = Form.useForm();
   const [currentStatus, setCurrentStatus] = useState(null)

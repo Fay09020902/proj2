@@ -17,6 +17,7 @@ const userSlice = createSlice({
     initialState,
     reducers: {
         setCurrentUser: (state, action) => {
+          console.log("reducer state ", state, action)
             state.currentUser = action.payload;
             state.isAdmin = action.payload.isAdmin;
             state.isAuthenticated = !!action.payload;
