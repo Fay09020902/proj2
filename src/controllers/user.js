@@ -18,9 +18,13 @@ exports.getAllUsers = async (req, res) => {
 // ✅ GET /api/users/me
 exports.getCurrentUser = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
-    console.log("user phili", user)
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    const userDoc = await User.findById(req.user.id).select('-password');
+    if (!userDoc) return res.status(404).json({ message: 'User not found' });
+
+    const user = userDoc.toObject(); 
+    user.id = user._id;
+    delete user._id;
+
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });

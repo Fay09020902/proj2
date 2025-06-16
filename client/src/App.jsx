@@ -9,7 +9,7 @@ import OnboardingForm from "./components/OnboardingForm";
 import HRDashboard from "./components/HRDashboard/HRDashboard";
 import EmployeeDashboard from "./components/EmployeeDashboard/EmployeeDashboard";
 import ViewApplicationPage from "./components/HRDashboard/ViewApplication";
-import RedirectHome from "./components/RedirectHome";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { useDispatch } from "react-redux";
 import { setCurrentUser } from "./features/user";
 import axios from "axios";
@@ -40,18 +40,19 @@ function App() {
   return isLoaded ? (
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/" element={<RedirectHome />} />
         <Route path="/register/:token" element={<RegisterWithToken />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/onboarding" element={<OnboardingForm />} />
-        <Route path="/hr/dashboard" element={<HRDashboard />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/update-password/:token" element={<UpdatePassword />} />
-        <Route
-          path="/hr/view-application/:userId"
-          element={<ViewApplicationPage />}
-        />
-        <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
+        <Route path="/signin" element={<SignIn />} />
+
+         <Route element={<ProtectedRoute allowedRoles={['HR']} />}>
+      <Route path="/hr/dashboard" element={<HRDashboard />} />
+      <Route path="/hr/view-application/:userId" element={<ViewApplicationPage />} />
+    </Route>
+        <Route element={<ProtectedRoute allowedRoles={['Employee']} />}>
+      <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
+      <Route path="/onboarding" element={<OnboardingForm />} />
+    </Route>
       </Route>
     </Routes>
   ) : (

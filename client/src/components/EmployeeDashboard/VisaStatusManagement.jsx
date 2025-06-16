@@ -9,10 +9,10 @@ const { Panel } = Collapse;
 const VisaStatusManagement = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
   const token = localStorage.getItem('token');
-  const userId = currentUser?._id;
+  const userId = currentUser?.id;
   const [visa, setVisa] = useState(null);
   const [form] = Form.useForm();
-  const [currentStatus, setCurrentStatus] = useState(null)
+
   const fetchVisaStatus = async () => {
       try {
         const res = await axios.get(`http://localhost:5000/api/employee/visa-status/${userId}`, {
@@ -27,6 +27,7 @@ const VisaStatusManagement = () => {
     useEffect(() => {
       if (userId && token) fetchVisaStatus();
     }, [userId, token]);
+
 
 const handleUpload = (type) => async ({ file }) => {
   const formData = new FormData();
