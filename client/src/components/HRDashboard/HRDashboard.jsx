@@ -1,6 +1,7 @@
 import { Tabs } from "antd";
 import HiringManagement from "./HiringManagement";
 import VisaStatusManagement from './VisaStatusManagement/VisaStatusManagement'
+import EmployeeProfilesPage from './EmployeeProfilesPage'
 const { TabPane } = Tabs;
 
 const HRDashboard = () => {
@@ -15,6 +16,9 @@ const HRDashboard = () => {
         </TabPane>
         <TabPane tab="Hiring Management" key="3">
           <HiringManagement />
+        </TabPane>
+        <TabPane tab="Employee Profiles" key="4">
+          <EmployeeProfilesPage />
         </TabPane>
       </Tabs>
     </div>
