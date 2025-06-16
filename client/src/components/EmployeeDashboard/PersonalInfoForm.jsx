@@ -1,5 +1,5 @@
 import { useState, useEffect, ChangeEvent, useCallback } from "react";
-import axios from "axios";
+import { makeHTTPGETFetch } from "../../services/api2";
 import {
   Form,
   Input,
@@ -21,36 +21,14 @@ const { Title } = Typography;
 const { Option } = Select;
 const { Panel } = Collapse;
 
-const PersonalInfoForm = () => {
+const PersonalInfoForm = ({form, profile}) => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user.currentUser);
   const token = localStorage.getItem("token");
   const onboardingStatus = currentUser?.onboardingStatus;
   const email = currentUser?.email;
-  const userId = currentUser?.id;
-  const { error:reduxerror, loading } = useSelector((state) => state.employee)
   const [error, setError] = useState("");
-  const [form] = Form.useForm();
-  const [profile, setProfile] = useState(null);
   const { handleDownload, handlePreview } = useDocumentActions(token , setError);
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:5000/api/employee/profile/${userId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setProfile(res.data);
-        form.setFieldsValue(res.data);
-      } catch (err) {
-        setError(err.message)
-      }
-    };
-    fetchProfile();
-  }, [userId, token, form]);
 
   if (!profile) return <p>Loading...</p>;
   if (onboardingStatus !== "Approved")
