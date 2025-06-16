@@ -59,8 +59,6 @@ exports.validateRegistrationToken = async (req, res) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
 
-  console.log('📨 Received token:', token);
-
   if (!token) {
     return res.status(400).json({ message: 'Token is missing from header' });
   }
@@ -85,12 +83,9 @@ exports.registerUser = async (req, res) => {
   const token = authHeader && authHeader.split(' ')[1];
 
   const { username, password } = req.body;
- // console.log("register user controller: token ", token, username)
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     const email = decoded.email;
-    //console.log("email: ,", email)
-
     const exists = await User.findOne({ email });
     if (exists) return res.status(400).json({ message: 'User already registered' });
 

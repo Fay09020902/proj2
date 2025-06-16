@@ -36,9 +36,7 @@ exports.getApplicationByUserId = async (req, res) => {
     const documentsUser = await Document.find({userId})
 
     const profile = await EmployeeProfile.findOne({ userId }).populate('documents');
-    console.log("profile: ", profile)
-    console.log("document ", documentsUser)
-
+    
     res.status(200).json({
       userId: user._id,
       fullName: profile ? `${profile.firstName} ${profile.lastName}` : '',

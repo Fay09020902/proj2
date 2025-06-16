@@ -5,7 +5,6 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 const sendInviteEmail = async (email, reset = false) => {
   const token = jwt.sign({ email }, JWT_SECRET);
-  //console.log("🔐 JWT_SECRET in use sendinvideemail:", process.env.JWT_SECRET);
 
   const link = reset
               ?`http://localhost:5173/update-password/${token}`

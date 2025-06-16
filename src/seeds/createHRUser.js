@@ -14,7 +14,6 @@ const createHRUser = async () => {
     // check if user already exists
     const existing = await User.findOne({ email });
     if (existing) {
-      console.log('HR user already exists!');
       return process.exit(0);
     }
 

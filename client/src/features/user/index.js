@@ -17,7 +17,6 @@ const userSlice = createSlice({
     initialState,
     reducers: {
         setCurrentUser: (state, action) => {
-          console.log("reducer state ", state, action)
             state.currentUser = action.payload;
             state.isAdmin = action.payload.isAdmin;
             state.isAuthenticated = !!action.payload;
@@ -118,7 +117,6 @@ export const loginUser = createAsyncThunk(
     'user/login',
     async ({ email, password }, {rejectWithValue}) => {
         try {
-          // console.log('Email, password',email, password);
             const res = await fetch("http://localhost:5000/api/login", {
                 method: "POST",
                 headers: {

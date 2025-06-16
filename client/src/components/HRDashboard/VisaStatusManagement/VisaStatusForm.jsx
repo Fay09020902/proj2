@@ -114,9 +114,9 @@ const VisaStatusForm = ({
             {actionType === "approve" && (
               <>
                 {doc.fileUrl && (
-                  <Link href={doc.fileUrl} target="_blank">
-                    {doc.originalName}
-                  </Link>
+                  <Text strong>
+                      {docKey}: {doc.originalName}
+                    </Text>
                 )}
                 <Button onClick={() => handlePreview(doc._id)}>Preview</Button>
                 <Button

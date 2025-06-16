@@ -56,7 +56,6 @@ exports.listDocuments = async (req, res) => {
     const myDocuments = await Document.find({ userId});
     res.json(myDocuments);
   } catch (err) {
-    console.log(err)
      res.status(500).json({ message: err.errmsg });
   }
 };

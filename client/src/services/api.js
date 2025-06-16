@@ -45,7 +45,6 @@ export function makeHTTPPOSTRequest(endpoint, bodyParams={}, tokenOverride = nul
 export function makeHTTPPUTRequest(endpoint, bodyParams={}){
     const token = localStorage.getItem('token');
     const url = new URL(API_URL + endpoint);
-    // console.log(`POST Request to ${url}`);
     const headers = new Headers({
         Authorization: `Bearer ${token}`,
         "Content-Type" : "application/json",

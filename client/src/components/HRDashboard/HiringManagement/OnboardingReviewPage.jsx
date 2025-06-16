@@ -11,10 +11,9 @@ const { TextArea } = Input;
 
 const OnboardingReviewPage = () => {
   const [activeTab, setActiveTab] = useState('Pending');
-  const { applications, fetched, loading, error } = useSelector((state) => state.onboarding);
+  const { applications, fetched, loading } = useSelector((state) => state.onboarding);
   const token = localStorage.getItem('token')
   const [initialFetched, setInitialFetched] = useState(false);
-  const [feedback, setFeedback] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
