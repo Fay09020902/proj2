@@ -1,7 +1,3 @@
-import {
-  fetchEmployees,
-  getEmployeeProfileById,
-} from "../../features/employee";
 import { useState, useEffect, ChangeEvent, useCallback } from "react";
 import axios from "axios";
 import {
@@ -18,8 +14,8 @@ import {
   Space,
   message,
 } from "antd";
-import { UploadOutlined, UserOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
+import useDocumentActions from "../../hooks/useDocumentActions";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -32,37 +28,11 @@ const PersonalInfoForm = () => {
   const onboardingStatus = currentUser?.onboardingStatus;
   const email = currentUser?.email;
   const userId = currentUser?.id;
-  const { error, loading } = useSelector((state) => state.employee);
+  const { error:reduxerror, loading } = useSelector((state) => state.employee)
+  const [error, setError] = useState("");
   const [form] = Form.useForm();
   const [profile, setProfile] = useState(null);
-
-  const handleDownload = async (docId, filename) => {
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/api/documents/download/${docId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          responseType: "blob",
-        }
-      );
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      // Clean up the blob URL
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error("Download failed", err);
-    }
-  };
-
-  const handlePreview = (docId) => {
-    const url = `http://localhost:5000/api/documents/preview/${docId}`;
-    window.open(url, "_blank");
-  };
+  const { handleDownload, handlePreview } = useDocumentActions(token , setError);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -76,7 +46,7 @@ const PersonalInfoForm = () => {
         setProfile(res.data);
         form.setFieldsValue(res.data);
       } catch (err) {
-        message.error("Failed to load profile");
+        setError(err.message)
       }
     };
     fetchProfile();

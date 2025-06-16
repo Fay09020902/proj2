@@ -45,14 +45,18 @@ function App() {
         <Route path="/update-password/:token" element={<UpdatePassword />} />
         <Route path="/signin" element={<SignIn />} />
 
-         <Route element={<ProtectedRoute allowedRoles={['HR']} />}>
-      <Route path="/hr/dashboard" element={<HRDashboard />} />
-      <Route path="/hr/view-application/:userId" element={<ViewApplicationPage />} />
-    </Route>
-        <Route element={<ProtectedRoute allowedRoles={['Employee']} />}>
-      <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
-      <Route path="/onboarding" element={<OnboardingForm />} />
-    </Route>
+        <Route element={<ProtectedRoute allowedRoles={["HR"]} />}>
+          <Route path="/hr/dashboard" element={<HRDashboard />} />
+          <Route
+            path="/hr/view-application/:userId"
+            element={<ViewApplicationPage />}
+          />
+        </Route>
+        
+        <Route element={<ProtectedRoute allowedRoles={["Employee"]} />}>
+          <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
+          <Route path="/onboarding" element={<OnboardingForm />} />
+        </Route>
       </Route>
     </Routes>
   ) : (

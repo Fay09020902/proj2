@@ -47,12 +47,6 @@ const handleUpload = (type) => async ({ file }) => {
   }
 };
 
-  const handlePreview = (docId) => {
-        const url = `http://localhost:5000/api/documents/preview/${docId}`;
-        window.open(url, '_blank');
-};
-
-
   if (!visa) return <p>Loading...</p>;
 
   const renderStage = () => {

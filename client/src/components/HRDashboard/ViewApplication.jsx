@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
-
+import useDocumentActions from '../../hooks/useDocumentActions';
 import { fetchApplicationByUserId} from '../../features/onboarding'
 import axios from 'axios';
 import { Typography, Button, Input, Form, Spin, Collapse, Alert } from 'antd';
@@ -18,11 +18,9 @@ const ViewApplicationPage = () => {
   const token = localStorage.getItem('token')
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState('');
-  const navigate = useNavigate();
+   const { handleDownload, handlePreview } = useDocumentActions(token , setErr);
 
-  useEffect(() => {
-  console.log("✅ ViewApplicationPage mounted");
-}, [])
+  const navigate = useNavigate();
 
    const handleApprove = async () => {
     setSubmitting(true);
@@ -57,29 +55,6 @@ const ViewApplicationPage = () => {
     setSubmitting(false);
   };
 
-
-      const handleDownload = async (docId, filename) => {
-      try {
-        const res = await axios.get(
-          `http://localhost:5000/api/documents/download/${docId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-            responseType: 'blob',
-          }
-        );
-        const url = window.URL.createObjectURL(new Blob([res.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', filename);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        // Clean up the blob URL
-        window.URL.revokeObjectURL(url);
-      } catch (err) {
-        console.error('Download failed', err);
-      }
-    };
 
   useEffect(() => {
      dispatch(fetchApplicationByUserId({ userId, token }));
@@ -160,13 +135,14 @@ return (
               <Paragraph key={doc._id}>
                 <b>{doc.type.replace('_', ' ').toUpperCase()}</b>: {doc.originalName}
                 <Button
-                  size="small"
-                  type="link"
                   onClick={() => handleDownload(doc._id, doc.originalName)}
                   style={{ marginLeft: 4 }}
                 >
                   Download
                 </Button>
+                  <Button onClick={() => handlePreview(doc._id)}>
+                    Preview
+                  </Button>
                 {doc.feedback && <span style={{ color: 'red', marginLeft: 8 }}>Feedback: {doc.feedback}</span>}
               </Paragraph>
             ))

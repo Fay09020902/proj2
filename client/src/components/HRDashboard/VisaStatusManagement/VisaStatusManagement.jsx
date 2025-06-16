@@ -1,8 +1,8 @@
 import VisaStatusForm from "./VisaStatusForm";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { Tabs, Spin, Alert, message } from "antd";
-
+import { Tabs, Spin, Alert } from "antd";
+import useDocumentActions from "../../../hooks/useDocumentActions";
 const { TabPane } = Tabs;
 
 const VisaStatusManagement = () => {
@@ -10,11 +10,8 @@ const VisaStatusManagement = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
+  const { handleDownload, handlePreview, handleNotify } = useDocumentActions(token , setError);
 
-  const handlePreview = (docId) => {
-    const url = `http://localhost:5000/api/documents/preview/${docId}`;
-    window.open(url, "_blank");
-  };
 
   const getNextStep = (emp) => {
     const { optReceipt, optEAD, i983, i20, workAuth } = emp;
@@ -72,48 +69,14 @@ const VisaStatusManagement = () => {
           },
         }
       );
-      fetchEmployees();
+      fetchEmployeesVisa();
     } catch (err) {
       setError(err.message);
     }
   };
 
-  const handleDownload = async (docId, filename) => {
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/api/documents/download/${docId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          responseType: "blob",
-        }
-      );
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
 
-  const handleNotify = async (userId, docType) => {
-    try {
-      await axios.post(
-        "http://localhost:5000/api/hr/visa-status/notify",
-        { userId, type: docType },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      message.success("Notification sent");
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const fetchEmployees = useCallback(async () => {
+  const fetchEmployeesVisa = useCallback(async () => {
     try {
       const res = await axios.get(
         "http://localhost:5000/api/hr/visa-status/all",
@@ -130,8 +93,8 @@ const VisaStatusManagement = () => {
   }, [token]);
 
   useEffect(() => {
-    fetchEmployees();
-  }, [fetchEmployees]);
+    fetchEmployeesVisa();
+  }, [fetchEmployeesVisa]);
 
   const optInProgress = employees.filter(
     (emp) => emp.submittedAllOPT === false && emp.workAuth === "F1(CPT/OPT)"
