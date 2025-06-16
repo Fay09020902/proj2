@@ -120,7 +120,7 @@ const fetchDocsForUser = async (userId) => {
                     if (feedback) {
                       handleReview({
                         userId: record.userId,
-                        docType: docKey,
+                        docType: docTypeMap[docKey],
                         action: 'reject',
                         feedback,
                       });

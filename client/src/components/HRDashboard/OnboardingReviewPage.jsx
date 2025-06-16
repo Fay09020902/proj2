@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import { Typography, Button, Input, Form, Collapse, Spin, Tabs, Table } from 'antd';
 const { Title, Paragraph, Text } = Typography;
 const { Panel } = Collapse;
@@ -6,34 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchApplicationsByStatus } from '../../features/onboarding'
 import TabPane from 'antd/es/tabs/TabPane';
 const { TextArea } = Input;
-// Tabs for Pending, Approved, and Rejected
 
-// For each application: show full name, email, and “View Application” button
-
-// “View Application”:
-
-// For Pending: show full data + approve/reject buttons
-
-// For Rejected and Approved: view-only
-
-const statusList = ['Pending', 'Approved', 'Rejected'];
-
-
-  const columns = [
-    { title: 'Full Name', dataIndex: 'fullName', key: 'fullName' },
-    { title: 'Email', dataIndex: 'email', key: 'email' },
-    {
-      title: 'View Application',
-      render: (_, record) => (
-        <Button
-          type="link"
-          onClick={() => window.open(`/hr/view-application/${record.userId}`, '_blank')}
-        >
-          View Application
-        </Button>
-      ),
-    },
-  ];
 
 const OnboardingReviewPage = () => {
   const [activeTab, setActiveTab] = useState('Pending');
@@ -42,10 +16,28 @@ const OnboardingReviewPage = () => {
   const [initialFetched, setInitialFetched] = useState(false);
   const [feedback, setFeedback] = useState('');
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  //避免重复fetch
+    const columns = [
+    { title: 'Full Name', dataIndex: 'fullName', key: 'fullName' },
+    { title: 'Email', dataIndex: 'email', key: 'email' },
+    {
+      title: 'View Application',
+      render: (_, record) => (
+        <Button
+          type="link"
+          onClick={() => navigate(`/hr/view-application/${record.userId}`)}
+        >
+          View Application
+        </Button>
+      ),
+    },
+  ];
+
+
   useEffect(() => {
       if (token && !initialFetched) {
+          //避免重复fetch
         dispatch(fetchApplicationsByStatus({ status: activeTab, token }));
         setInitialFetched(true);
       } else if (token && !fetched[activeTab]) {

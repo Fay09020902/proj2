@@ -40,6 +40,7 @@ const handleUpload = (type) => async ({ file }) => {
       headers: { Authorization: `Bearer ${token}` },
     });
     message.success(`${type} uploaded successfully`);
+    //refetch status to get new status and the next step based on new status
     fetchVisaStatus();
   } catch (err) {
     message.error('Upload failed');

@@ -19,7 +19,6 @@ import styled from "@emotion/styled";
 import axios from "axios";
 import { UploadOutlined } from "@ant-design/icons";
 import { setCurrentUser, setOnboardingStatus } from "../features/user";
-import EmployeeDashboard from "./EmployeeDashboard/EmployeeDashboard";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -44,7 +43,7 @@ const OnboardingForm = () => {
   const feedback = currentUser?.feedback;
   const isPending = onboardingStatus === "Pending";
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
@@ -122,10 +121,10 @@ const navigate = useNavigate();
   };
 
   useEffect(() => {
-  if (onboardingStatus === 'Approved' ) {
-    navigate(`/employee/dashboard`);
-  }
-}, [onboardingStatus, userId, navigate]);
+    if (onboardingStatus === "Approved") {
+      navigate(`/employee/dashboard`);
+    }
+  }, [onboardingStatus, navigate]);
 
   return (
     <Form

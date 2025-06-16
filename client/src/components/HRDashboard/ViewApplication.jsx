@@ -20,6 +20,10 @@ const ViewApplicationPage = () => {
   const [feedback, setFeedback] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+  console.log("✅ ViewApplicationPage mounted");
+}, [])
+
    const handleApprove = async () => {
     setSubmitting(true);
     try {
