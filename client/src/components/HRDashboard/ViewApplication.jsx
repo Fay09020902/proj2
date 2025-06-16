@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import useDocumentActions from '../../hooks/useDocumentActions';
 import { fetchApplicationByUserId} from '../../features/onboarding'
-import axios from 'axios';
 import { Typography, Button, Input, Form, Spin, Collapse, Alert } from 'antd';
 // import { setOnboardingStatus } from '../../features/user';
 const { Title, Paragraph } = Typography;

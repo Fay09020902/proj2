@@ -1,94 +1,117 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Button, message, Typography, Space, Modal } from 'antd';
-import axios from 'axios';
-
+import React, { useEffect, useState } from "react";
+import { Table, Button, Typography, Space, Input } from "antd";
+import { useMemo } from "react";
+const { Search } = Input;
 const { Text, Link } = Typography;
 
-const VisaStatusForm = ({employees,
+const VisaStatusForm = ({
+  employees,
   mode,
   handleDownload,
   handlePreview,
   handleReview,
   handleNotify,
   getNextStep,
-getDaysRemaining}) => {
+  getDaysRemaining,
+}) => {
+  const [query, setQuery] = useState("");
+  const [filtered, setFiltered] = useState([]);
+
+  const sortedEmployees = useMemo(() => {
+    return [...employees].sort((a, b) => {
+      const aLast = a.lastName || "";
+      const bLast = b.lastName || "";
+      return aLast.localeCompare(bLast);
+    });
+  }, [employees]);
+
+  useEffect(() => {
+    setFiltered(sortedEmployees);
+  }, [sortedEmployees]);
 
   const docTypeMap = {
-  optReceipt: 'opt_receipt',
-  optEAD: 'opt_ead',
-  i983: 'i_983',
-  i20: 'i_20',
-  driverslicense: 'drivers_license',
-  profilepicture: 'profile_picture',
-};
+    optReceipt: "opt_receipt",
+    optEAD: "opt_ead",
+    i983: "i_983",
+    i20: "i_20",
+    driverslicense: "drivers_license",
+    profilepicture: "profile_picture",
+  };
 
   function toCamelCasePreserveAcronym(snake) {
-  return snake.split('_').map((part, index) => {
-    if (index === 0) return part;
-    return part.toUpperCase();
-  }).join('');
-}
-
-  const [docMap, setDocMap] = useState({}); // userId -> [documents]
-  const token = localStorage.getItem('token');
-
-const fetchDocsForUser = async (userId) => {
-  if (docMap[userId]) return;
-
-  try {
-    const res = await axios.get(`http://localhost:5000/api/documents/user/${userId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setDocMap(prev => ({ ...prev, [userId]: res.data }));
-  } catch (err) {
-    message.error('Failed to fetch user documents');
+    return snake
+      .split("_")
+      .map((part, index) => {
+        if (index === 0) return part;
+        return part.toUpperCase();
+      })
+      .join("");
   }
-};
+
+  // const fetchDocsForUser = async (userId) => {
+  //   if (docMap[userId]) return;
+
+  //   try {
+  //     const res = await axios.get(
+  //       `http://localhost:5000/api/documents/user/${userId}`,
+  //       {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       }
+  //     );
+  //     setDocMap((prev) => ({ ...prev, [userId]: res.data }));
+  //   } catch (err) {
+  //     message.error("Failed to fetch user documents");
+  //   }
+  // };
 
   const columns = [
     {
-      title: 'Full Name',
-      dataIndex: 'fullName',
-      key: 'fullName',
+      title: "Full Name",
+      dataIndex: "fullName",
+      key: "fullName",
     },
     {
-      title: 'Work Auth',
-      dataIndex: 'workAuth',
-      key: 'workAuth',
+      title: "Work Auth",
+      dataIndex: "workAuth",
+      key: "workAuth",
     },
     {
-      title: 'Start - End Date',
-      key: 'dateRange',
+      title: "Start - End Date",
+      key: "dateRange",
       render: (_, record) => {
-        const start = record.startDate ? new Date(record.startDate).toLocaleDateString() : 'N/A';
-        const end = record.endDate ? new Date(record.endDate).toLocaleDateString() : 'N/A';
+        const start = record.startDate
+          ? new Date(record.startDate).toLocaleDateString()
+          : "N/A";
+        const end = record.endDate
+          ? new Date(record.endDate).toLocaleDateString()
+          : "N/A";
         return `${start} - ${end}`;
       },
     },
     {
-      title: 'Days Remaining',
-      key: 'daysRemaining',
+      title: "Days Remaining",
+      key: "daysRemaining",
       render: (_, record) => getDaysRemaining(record.endDate),
     },
     {
-      title: 'Next Step',
-      key: 'nextStep',
+      title: "Next Step",
+      key: "nextStep",
       render: (_, record) => {
         const [nextStep] = getNextStep(record);
         return <Text>{nextStep}</Text>;
       },
     },
-  ]
-  if(mode === 'in-progress')
+  ];
+  if (mode === "in-progress")
     columns.push({
-      title: 'Action',
-      key: 'action',
+      title: "Action",
+      key: "action",
       render: (_, record) => {
         const [step, actionType, docKey] = getNextStep(record);
         const doc = record[toCamelCasePreserveAcronym(docKey)] || {};
         return (
           <Space direction="vertical">
-            {actionType === 'approve' && (
+            {actionType === "approve" && (
               <>
                 {doc.fileUrl && (
                   <Link href={doc.fileUrl} target="_blank">
@@ -107,7 +130,7 @@ const fetchDocsForUser = async (userId) => {
                     handleReview({
                       userId: record.userId,
                       docType: docTypeMap[docKey],
-                      action: 'approve',
+                      action: "approve",
                     })
                   }
                 >
@@ -116,12 +139,12 @@ const fetchDocsForUser = async (userId) => {
                 <Button
                   danger
                   onClick={() => {
-                    const feedback = prompt('Enter rejection feedback:');
+                    const feedback = prompt("Enter rejection feedback:");
                     if (feedback) {
                       handleReview({
                         userId: record.userId,
                         docType: docTypeMap[docKey],
-                        action: 'reject',
+                        action: "reject",
                         feedback,
                       });
                     }
@@ -131,7 +154,7 @@ const fetchDocsForUser = async (userId) => {
                 </Button>
               </>
             )}
-            {actionType === 'notify' && (
+            {actionType === "notify" && (
               <Button onClick={() => handleNotify(record.userId, docKey)}>
                 Send Notification
               </Button>
@@ -139,27 +162,47 @@ const fetchDocsForUser = async (userId) => {
           </Space>
         );
       },
-    },
-  )
+    });
 
-
-  if (mode === 'all') {
+  if (mode === "all") {
     columns.push({
-      title: 'Approved Documents',
-      key: 'documents',
+      title: "Approved Documents",
+      key: "documents",
       render: (_, record) => {
-        const approvedTypes = ['optReceipt', 'optEAD', 'i983', 'i20', 'driverslicense', 'profilepicture'];
+        const approvedTypes = [
+          "optReceipt",
+          "optEAD",
+          "i983",
+          "i20",
+          "driverslicense",
+          "profilepicture",
+        ];
         return (
           <Space direction="vertical">
             {approvedTypes.map((key) => {
               const doc = record[key];
-              if (doc && doc.status === 'Approved') {
+              if (doc && doc.status === "Approved") {
                 return (
-                  <div key={doc._id || key} >
-                    <Text strong>{key}: {doc.originalName}</Text>
-                    <div style={{ marginTop: '4px' }}>
-                      <Button size="small" onClick={() => handlePreview(doc._id)} style={{ marginRight: 8 }}>Preview</Button>
-                      <Button size="small" onClick={() => handleDownload(doc._id, doc.originalName)}>Download</Button>
+                  <div key={doc._id || key}>
+                    <Text strong>
+                      {key}: {doc.originalName}
+                    </Text>
+                    <div style={{ marginTop: "4px" }}>
+                      <Button
+                        size="small"
+                        onClick={() => handlePreview(doc._id)}
+                        style={{ marginRight: 8 }}
+                      >
+                        Preview
+                      </Button>
+                      <Button
+                        size="small"
+                        onClick={() =>
+                          handleDownload(doc._id, doc.originalName)
+                        }
+                      >
+                        Download
+                      </Button>
                     </div>
                   </div>
                 );
@@ -172,11 +215,33 @@ const fetchDocsForUser = async (userId) => {
     });
   }
 
+  const handleSearch = (e) => {
+  const value = e.target.value.toLowerCase();
+  setQuery(value);
+  const result = employees.filter((emp) => {
+    return (
+      emp.firstName.toLowerCase().includes(value) ||
+      emp.lastName.toLowerCase().includes(value) ||
+      emp.preferredName?.toLowerCase().includes(value)
+    );
+  });
+  setFiltered(result);
+};
+
   return (
     <div style={{ padding: 40 }}>
+      {mode === "all" && (
+        <Search
+          placeholder="Search by first name, last name, or preferred name"
+          value={query}
+          onChange={handleSearch}
+          style={{ marginBottom: 20, maxWidth: 400 }}
+          allowClear
+        />
+      )}
       <Table
         rowKey="userId"
-        dataSource={employees}
+        dataSource={mode === "all" ? filtered : sortedEmployees}
         columns={columns}
         pagination={{ pageSize: 10 }}
       />

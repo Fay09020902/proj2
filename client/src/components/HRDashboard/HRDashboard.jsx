@@ -1,5 +1,5 @@
 import { Tabs } from "antd";
-import HiringManagement from "./HiringManagement";
+import HiringManagement from "./HiringManagement/HiringManagement";
 import VisaStatusManagement from './VisaStatusManagement/VisaStatusManagement'
 import EmployeeProfilesPage from './EmployeeProfilesPage'
 const { TabPane } = Tabs;

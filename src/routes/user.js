@@ -29,25 +29,25 @@ router.get('/', async (req, res) => {
 // Register with token
 router.post('/register', registerUser);
 
-// ✅ Get all employees (HR only)
+// Get all employees (HR only)
 router.get('/', auth, isHR, getAllUsers);
 
-// ✅ Get current logged-in user's info
+// Get current logged-in user's info
 router.get('/me', auth, getCurrentUser);
 
-// ✅ Get one user by ID (HR only)
+// Get one user by ID (HR only)
 router.get('/:id', auth, isHR, getUserById);
 
-// ✅ Update personal info
+// Update personal info
 router.put('/:id', auth, updateUserInfo);
 
-//✅ send password
+//send password
 router.post('/reset-password', sendResetEmail);
 
-//✅ update password
+//update password
 router.post('/update-password', updatePassword);
 
-// ✅ Search user by name (HR only)
+// Search user by name (HR only)
 router.get('/search/name', auth, isHR, searchUsersByName);
 
 module.exports = router;

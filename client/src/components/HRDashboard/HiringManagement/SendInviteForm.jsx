@@ -1,5 +1,5 @@
 import { Form, Input, Button, message } from "antd";
-import { CardContainer, AuthContainer } from '../../common/QuantityControl'
+import { AuthContainer } from "../../../common/QuantityControl";
 import { useState } from "react";
 
 const SendInviteForm = ({setRefreshTrigger}) => {

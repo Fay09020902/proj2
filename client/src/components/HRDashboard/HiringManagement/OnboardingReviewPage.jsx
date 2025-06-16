@@ -4,7 +4,7 @@ import { Typography, Button, Input, Form, Collapse, Spin, Tabs, Table } from 'an
 const { Title, Paragraph, Text } = Typography;
 const { Panel } = Collapse;
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchApplicationsByStatus } from '../../features/onboarding'
+import { fetchApplicationsByStatus } from '../../../features/onboarding';
 import TabPane from 'antd/es/tabs/TabPane';
 const { TextArea } = Input;
 

@@ -6,7 +6,6 @@ const isHR = require('../middleware/isHR');
 const {
   getInvitesHistory,
   sendRegistrationLink,
-  rejectAccessRequest,
   getAllEmployeeProfiles,
   getEmployeeProfileById,
 } = require('../controllers/hr');

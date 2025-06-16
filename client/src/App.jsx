@@ -52,7 +52,7 @@ function App() {
             element={<ViewApplicationPage />}
           />
         </Route>
-        
+
         <Route element={<ProtectedRoute allowedRoles={["Employee"]} />}>
           <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
           <Route path="/onboarding" element={<OnboardingForm />} />

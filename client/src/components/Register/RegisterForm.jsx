@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Form, Input, Button, Typography, message, Card } from 'antd';
 import styled from '@emotion/styled';
-import { useDispatch, useSelector } from "react-redux";
-import { setCurrentUser } from '../../features/user'
 const { Title } = Typography;
 
 const RegisterContainer = styled.div`
@@ -25,7 +23,6 @@ const StyledForm = styled(Form)`
 
 const RegisterWithToken = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { token } = useParams();
   const [err, setErr] = useState(null)
   const [email, setEmail] = useState('');

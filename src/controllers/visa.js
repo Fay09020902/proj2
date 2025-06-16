@@ -72,6 +72,8 @@ exports.hrVisaStatusAll = async (req, res) => {
       };
       result.push({
         userId: user._id,
+        firstName: profile.firstName,
+        lastName: profile.lastName,
         fullName: `${profile.firstName} ${profile.lastName}`,
         email: user.email,
         workAuth: profile.visa?.visaType || '',
