@@ -40,6 +40,14 @@ const PersonalInfoForm = ({form, profile}) => {
       style={{ background: "#fff", padding: 24 }}
     >
       {error && <p style={{ color: "red" }}>{error}</p>}
+      <Space direction="vertical" style={{ alignItems: "center", marginBottom: 20 }}>
+  <Avatar
+    size={120}
+    src={profile.profilePictue}
+    alt="Profile"
+  />
+  <div>{`${profile.firstName} ${profile.lastName}`}</div>
+</Space>
       <Collapse defaultActiveKey={["1", "2"]}>
         <Panel header="Name & Contact" key="1">
           <Row gutter={16}>
