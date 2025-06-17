@@ -8,15 +8,15 @@ const documentSchema = new mongoose.Schema({
   },
   filename: {
     type: String,
-    required: true, // actual filename stored on disk
+    required: true,
   },
   fileUrl: {
     type: String,
-    required: true, // URL used for frontend access or download
+    required: true,
   },
   originalName: {
     type: String,
-    required: true, // original uploaded file name
+    required: true,
   },
   type: {
     type: String,

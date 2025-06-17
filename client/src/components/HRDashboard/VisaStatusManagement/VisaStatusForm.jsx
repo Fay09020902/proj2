@@ -48,22 +48,6 @@ const VisaStatusForm = ({
       .join("");
   }
 
-  // const fetchDocsForUser = async (userId) => {
-  //   if (docMap[userId]) return;
-
-  //   try {
-  //     const res = await axios.get(
-  //       `http://localhost:5000/api/documents/user/${userId}`,
-  //       {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       }
-  //     );
-  //     setDocMap((prev) => ({ ...prev, [userId]: res.data }));
-  //   } catch (err) {
-  //     message.error("Failed to fetch user documents");
-  //   }
-  // };
-
   const columns = [
     {
       title: "Full Name",

@@ -1,4 +1,4 @@
-const AccessRequest = require('../models/AccessRequest');
+// const AccessRequest = require('../models/AccessRequest');
 const sendInviteEmail = require('../utils/sendInviteEmail');
 const User = require('../models/User');
 const EmployeeProfile = require('../models/EmployeeProfile');
@@ -45,9 +45,6 @@ exports.sendRegistrationLink = async (req, res) => {
     const { name, email } = req.body;
 
     try {
-      // const request = await AccessRequest.findEmail(email);
-      // if (!request) return res.status(404).json({ message: 'Request not found' });
-
       // Check if the user is already registered
       const existingUser = await User.findOne({ email });
       if (existingUser) {
@@ -79,24 +76,24 @@ exports.sendRegistrationLink = async (req, res) => {
     }
   };
 
-  exports.rejectAccessRequest = async (req, res) => {
-    const { id } = req.params;
+  // exports.rejectAccessRequest = async (req, res) => {
+  //   const { id } = req.params;
 
-    try {
-      const request = await AccessRequest.findById(id);
-      if (!request) return res.status(404).json({ message: 'Request not found' });
+  //   try {
+  //     const request = await AccessRequest.findById(id);
+  //     if (!request) return res.status(404).json({ message: 'Request not found' });
 
-      if (request.status !== 'pending') {
-        return res.status(400).json({ message: `Cannot reject a request that is already ${request.status}` });
-      }
+  //     if (request.status !== 'pending') {
+  //       return res.status(400).json({ message: `Cannot reject a request that is already ${request.status}` });
+  //     }
 
-      request.status = 'rejected';
-      await request.save();
+  //     request.status = 'rejected';
+  //     await request.save();
 
-      res.status(200).json({ message: 'Access request rejected' });
+  //     res.status(200).json({ message: 'Access request rejected' });
 
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Failed to reject request' });
-    }
-  };
+  //   } catch (err) {
+  //     console.error(err);
+  //     res.status(500).json({ message: 'Failed to reject request' });
+  //   }
+  // };

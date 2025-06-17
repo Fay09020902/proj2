@@ -7,49 +7,49 @@ require('dotenv').config();
 
 
 const JWT_SECRET = process.env.JWT_SECRET;
-const AccessRequest = require('../models/AccessRequest');
+// const AccessRequest = require('../models/AccessRequest');
 
-// Employee requests access → stored in DB
-exports.requestAccess = async (req, res) => {
-  const { email } = req.body;
+// // Employee requests access → stored in DB
+// exports.requestAccess = async (req, res) => {
+//   const { email } = req.body;
 
-  if (!email) {
-    return res.status(400).json({ message: 'Email is required' });
-  }
+//   if (!email) {
+//     return res.status(400).json({ message: 'Email is required' });
+//   }
 
-  try {
-    // Check if user already registered
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already registered with this email.' });
-    }
+//   try {
+//     // Check if user already registered
+//     const existingUser = await User.findOne({ email });
+//     if (existingUser) {
+//       return res.status(400).json({ message: 'User already registered with this email.' });
+//     }
 
-    const existingRequest = await AccessRequest.findOne({ email });
+//     const existingRequest = await AccessRequest.findOne({ email });
 
-    if (existingRequest) {
-      if (existingRequest.status === 'pending') {
-        return res.status(400).json({ message: 'You’ve already requested access. Please wait for HR to respond.' });
-      }
+//     if (existingRequest) {
+//       if (existingRequest.status === 'pending') {
+//         return res.status(400).json({ message: 'You’ve already requested access. Please wait for HR to respond.' });
+//       }
 
-      // If previously approved or rejected but not yet registered, update timestamp
-      existingRequest.status = 'pending';
-      existingRequest.createdAt = new Date(); // update timestamp
-      await existingRequest.save();
+//       // If previously approved or rejected but not yet registered, update timestamp
+//       existingRequest.status = 'pending';
+//       existingRequest.createdAt = new Date(); // update timestamp
+//       await existingRequest.save();
 
-      return res.status(200).json({ message: 'Request re-submitted. Please wait for HR to respond.' });
-    }
+//       return res.status(200).json({ message: 'Request re-submitted. Please wait for HR to respond.' });
+//     }
 
-    // No request found → create a new one
-    const request = new AccessRequest({ email });
-    await request.save();
+//     // No request found → create a new one
+//     const request = new AccessRequest({ email });
+//     await request.save();
 
-    res.status(200).json({ message: 'Request submitted. Please wait for HR to respond.' });
+//     res.status(200).json({ message: 'Request submitted. Please wait for HR to respond.' });
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// };
 
 
 
