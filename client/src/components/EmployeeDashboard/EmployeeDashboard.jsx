@@ -15,9 +15,7 @@ const EmployeeDashboard = () => {
   const [form] = Form.useForm();
   const currentUser = useSelector((state) => state.user.currentUser);
   const userId = currentUser?.id;
-
-  useEffect(() => {
-    const fetchProfile = async () => {
+const fetchProfile = async () => {
       try {
         setLoading(true);
         const data = await makeHTTPGETFetch(`employee/profile/${userId}`);
@@ -29,7 +27,7 @@ const EmployeeDashboard = () => {
         setLoading(false);
       }
     };
-
+  useEffect(() => {
     if (userId) {
       fetchProfile();
     }
@@ -52,7 +50,7 @@ const EmployeeDashboard = () => {
       <h1>Employee Dashboard</h1>
       <Tabs activeKey={activeTab} onChange={setActiveTab}>
         <TabPane tab="Personal Info" key="1">
-          {activeTab === '1' && <PersonalInfoForm form={form} profile={profile} />}
+          {activeTab === '1' && <PersonalInfoForm form={form} profile={profile}  refreshProfile={fetchProfile}/>}
         </TabPane>
         {profile?.visa?.visaType === 'F1(CPT/OPT)' && (
           <TabPane tab="Visa Status Management" key="2">

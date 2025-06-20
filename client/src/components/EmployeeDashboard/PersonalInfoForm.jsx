@@ -1,100 +1,138 @@
-import { useState, useEffect, ChangeEvent, useCallback } from "react";
-import { makeHTTPGETFetch } from "../../services/api2";
+import { useState } from "react";
 import {
   Form,
   Input,
   Button,
   Row,
   Col,
-  Select,
-  Upload,
-  Typography,
   Collapse,
   Avatar,
   Space,
-  message,
+  Modal,
 } from "antd";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import useDocumentActions from "../../hooks/useDocumentActions";
+import axios from "axios";
 
-const { Title } = Typography;
-const { Option } = Select;
 const { Panel } = Collapse;
 
-const PersonalInfoForm = ({form, profile}) => {
-  const dispatch = useDispatch();
+const PersonalInfoForm = ({ form, profile, refreshProfile }) => {
   const currentUser = useSelector((state) => state.user.currentUser);
-  const token = localStorage.getItem("token");
   const onboardingStatus = currentUser?.onboardingStatus;
   const email = currentUser?.email;
+  const token = localStorage.getItem("token");
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [originalProfile, setOriginalProfile] = useState(null);
   const [error, setError] = useState("");
-  const { handleDownload, handlePreview } = useDocumentActions(token , setError);
+
+  const { handleDownload, handlePreview } = useDocumentActions(token, setError);
 
   if (!profile) return <p>Loading...</p>;
   if (onboardingStatus !== "Approved")
-    return <div>You are not allowed to view the page</div>;
+    return <div>You are not allowed to view this page.</div>;
+
+  const handleUpdate = async (values) => {
+    try {
+      await axios.put("http://localhost:5000/api/employee/profile", values, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      refreshProfile(); // refresh visa data after update
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const onEdit = () => {
+    setOriginalProfile(form.getFieldsValue());
+    setIsEditing(true);
+  };
+
+  const onCancel = () => {
+    const confirmDiscard = window.confirm(
+      "Are you sure you want to discard all your changes?"
+    );
+    if (confirmDiscard) {
+      form.setFieldsValue(originalProfile); // restore original values
+      setIsEditing(false);
+    }
+  };
+
+  const onSave = async () => {
+    try {
+      const values = await form.validateFields();
+      await handleUpdate(values);
+      setIsEditing(false);
+    } catch (err) {
+      setError(err.message)
+    }
+  };
+
+  const renderInput = (name, label, disabled = false) => (
+    <Form.Item name={name} label={label}>
+      <Input disabled={!isEditing || disabled} />
+    </Form.Item>
+  );
+
   return (
     <Form
       form={form}
       layout="vertical"
+      initialValues={profile}
       style={{ background: "#fff", padding: 24 }}
     >
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <Space direction="vertical" style={{ alignItems: "center", marginBottom: 20 }}>
-  <Avatar
-    size={120}
-    src={profile.profilePictue}
-    alt="Profile"
-  />
-  <div>{`${profile.firstName} ${profile.lastName}`}</div>
-</Space>
-      <Collapse defaultActiveKey={["1", "2"]}>
+
+      <Space
+        direction="vertical"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          marginBottom: 24,
+          borderBottom: "1px solid #f0f0f0",
+          paddingBottom: 16,
+        }}
+      >
+        <Avatar
+          size={120}
+          src={profile.profilePictue}
+          alt="Profile Picture"
+          style={{ border: "1px solid #ccc" }}
+        />
+        <div style={{ fontSize: 18, fontWeight: 500 }}>
+          {`${profile.firstName} ${profile.lastName}`}
+        </div>
+
+        <div style={{ display: "flex", gap: 8 }}>
+          {isEditing ? (
+            <>
+              <Button type="primary" onClick={onSave}>
+                Save
+              </Button>
+              <Button danger onClick={onCancel}>
+                Cancel
+              </Button>
+            </>
+          ) : (
+            <Button onClick={onEdit}>Edit</Button>
+          )}
+        </div>
+      </Space>
+
+      <Collapse defaultActiveKey={["1", "2", "3", "4", "5"]}>
         <Panel header="Name & Contact" key="1">
           <Row gutter={16}>
-            <Col span={8}>
-              <Form.Item label="First Name">
-                <Input
-                  value={profile?.firstName}
-                  //   disabled={!isEditing}
-                  //   onChange={handleChange('name', 'firstName')}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Last Name">
-                <Input
-                  value={profile?.lastName}
-                  //disabled={!isEditing}
-                  //onChange={handleChange('name', 'lastName')}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Preferred Name">
-                <Input
-                  value={profile?.preferredName}
-                  //disabled={!isEditing}
-                  //onChange={handleChange('name', 'preferredName')}
-                />
-              </Form.Item>
+            <Col span={8}>{renderInput("firstName", "First Name")}</Col>
+            <Col span={8}>{renderInput("lastName", "Last Name")}</Col>
+            <Col span={8}>{renderInput("preferredName", "Preferred Name")}</Col>
+            <Col span={12}>
+              {renderInput(["contact", "cellPhone"], "Cell Phone")}
             </Col>
             <Col span={12}>
-              <Form.Item label="Cell Phone">
-                <Input
-                  value={profile.contact?.cellPhone}
-                  //disabled={!isEditing}
-                  //onChange={handleChange('contact', 'cell')}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="Work Phone">
-                <Input
-                  value={profile.contact?.workPhone}
-                  //disabled={!isEditing}
-                  //onChange={handleChange('contact', 'work')}
-                />
-              </Form.Item>
+              {renderInput(["contact", "workPhone"], "Work Phone")}
             </Col>
             <Col span={24}>
               <Form.Item label="Email">
@@ -108,15 +146,10 @@ const PersonalInfoForm = ({form, profile}) => {
           <Row gutter={16}>
             {["building", "street", "city", "state", "zip"].map((field) => (
               <Col span={12} key={field}>
-                <Form.Item
-                  label={field.replace(/\b\w/g, (c) => c.toUpperCase())}
-                >
-                  <Input
-                    value={profile.address?.[field]}
-                    //disabled={!isEditing}
-                    //onChange={handleChange('address', field)}
-                  />
-                </Form.Item>
+                {renderInput(
+                  ["address", field],
+                  field.charAt(0).toUpperCase() + field.slice(1)
+                )}
               </Col>
             ))}
           </Row>
@@ -141,50 +174,21 @@ const PersonalInfoForm = ({form, profile}) => {
             </Col>
           </Row>
         </Panel>
+
         <Panel header="Emergency Contact" key="4">
           <Row gutter={16}>
-            <Col span={8}>
-              <Form.Item label="First Name">
-                <Input
-                  value={profile.emergencyContacts?.[0]?.firstName}
-                  disabled
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Last Name">
-                <Input
-                  value={profile.emergencyContacts?.[0]?.lastName}
-                  disabled
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Middle Name">
-                <Input
-                  value={profile.emergencyContacts?.[0]?.middleName}
-                  disabled
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Phone">
-                <Input value={profile.emergencyContacts?.[0]?.phone} disabled />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Email">
-                <Input value={profile.emergencyContacts?.[0]?.email} disabled />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Relationship">
-                <Input
-                  value={profile.emergencyContacts?.[0]?.relationship}
-                  disabled
-                />
-              </Form.Item>
-            </Col>
+            {[
+              "firstName",
+              "lastName",
+              "middleName",
+              "phone",
+              "email",
+              "relationship",
+            ].map((field) => (
+              <Col span={8} key={field}>
+                {renderInput(["emergencyContacts", 0, field], field)}
+              </Col>
+            ))}
           </Row>
         </Panel>
 

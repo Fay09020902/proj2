@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import RegisterWithToken from "./components/Register/RegisterForm";
 import SignIn from "./components/SignIn/SignIn";
 import UpdatePassword from "./components/SignIn/UpdatePassword";
@@ -40,6 +40,7 @@ function App() {
   return isLoaded ? (
     <Routes>
       <Route element={<Layout />}>
+      <Route path="/" element={<Navigate to="/signin" replace />} />
         <Route path="/register/:token" element={<RegisterWithToken />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/update-password/:token" element={<UpdatePassword />} />
