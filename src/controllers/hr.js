@@ -75,25 +75,3 @@ exports.sendRegistrationLink = async (req, res) => {
       res.status(500).json({ message: 'Failed to send invite email.' });
     }
   };
-
-  // exports.rejectAccessRequest = async (req, res) => {
-  //   const { id } = req.params;
-
-  //   try {
-  //     const request = await AccessRequest.findById(id);
-  //     if (!request) return res.status(404).json({ message: 'Request not found' });
-
-  //     if (request.status !== 'pending') {
-  //       return res.status(400).json({ message: `Cannot reject a request that is already ${request.status}` });
-  //     }
-
-  //     request.status = 'rejected';
-  //     await request.save();
-
-  //     res.status(200).json({ message: 'Access request rejected' });
-
-  //   } catch (err) {
-  //     console.error(err);
-  //     res.status(500).json({ message: 'Failed to reject request' });
-  //   }
-  // };
