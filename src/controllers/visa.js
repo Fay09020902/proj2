@@ -111,15 +111,7 @@ exports.hrVisaStatusAll = async (req, res) => {
   }
 };
 
-// {
-//   fullName: 'John Doe',
-//   email: 'john@example.com',
-//   workAuth: 'F1(CPT/OPT)',
-//   optReceipt: { status: 'Approved', ... },
-//   optEAD: { status: 'Pending', ... },
-//   i983: { status: 'Not Submitted' },
-//   i20: { status: 'Not Available' }
-// }
+
 
 exports.hrVisaStatusReview = async (req, res) => {
   try {
