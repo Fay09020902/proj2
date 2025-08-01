@@ -9,7 +9,6 @@ const {
   listDocuments,
   previewDocument,
    downloadDocument,
-//   deleteDocument
 } = require('../controllers/document');
 
 router.post('/upload', auth, upload.single('file'), uploadDocument);
