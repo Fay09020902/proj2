@@ -16,6 +16,6 @@ router.post('/upload', auth, upload.single('file'), uploadDocument);
 router.get('/list/:userId', isHR, listDocuments);
 router.get('/preview/:id', previewDocument);
 router.get('/download/:id', downloadDocument);
-// router.delete('/:id', deleteDocument);
+
 
 module.exports = router;
